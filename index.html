@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Proyecto: Variador de Velocidad EEST N° 1 Rauch</title>
+    <!-- Tailwind CSS CDN for utility classes -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN for interactive charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Google Fonts for 'Inter' and 'Montserrat' -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@700;800&display=swap" rel="stylesheet">
+    <style>
+        /* Base Color Palette: Deep Navy, Rich Blue, Sky Blue, Soft Cream, Light Grey */
+        :root {
+            --color-primary-dark: #0D214F; /* Very deep blue, almost black */
+            --color-primary-medium: #2A528A; /* Rich, classic blue */
+            --color-primary-light: #6FA8DC; /* Softer, sky blue */
+            --color-secondary-cream: #FDF8ED; /* Warm, inviting cream */
+            --color-secondary-light-grey: #ECF0F1; /* Very light, subtle grey for backgrounds */
+            --color-accent-green: #2ECC71; /* Vibrant green for success/start */
+            --color-accent-red: #E74C3C; /* Strong red for error/stop */
+            --color-accent-orange: #FF9800; /* Orange for medium efficiency */
+
+            --color-text-heading: var(--color-primary-dark);
+            --color-text-body: #4A6572; /* A muted blue-grey for body text */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-secondary-cream) 100%);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 40px;
+            box-sizing: border-box;
+            overflow-x: hidden;
+            color: var(--color-text-body);
+            line-height: 1.7; /* Enhanced readability */
+        }
+        .container {
+            background-color: var(--color-secondary-cream);
+            border-radius: 30px; /* Even more rounded */
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2); /* Deeper, more dramatic shadow */
+            padding: 60px; /* More internal padding for a luxurious feel */
+            max-width: 950px; /* Wider for more content space */
+            width: 100%;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            gap: 50px; /* More space between sections */
+            animation: fadeIn 1.5s ease-out; /* Slower, smoother fade-in */
+            border: 2px solid rgba(255, 255, 255, 0.8); /* More prominent border for "floating" effect */
+            position: relative; /* For school emblem */
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* School Emblem */
+        .school-emblem {
+            position: absolute;
+            top: 20px;
+            left: 30px;
+            width: 100px;
+            height: 100px;
+            background-color: var(--color-primary-dark);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column; /* Stack text */
+            justify-content: center;
+            align-items: center;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--color-secondary-cream);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            border: 3px solid var(--color-primary-light);
+            z-index: 10;
+            animation: emblemPulse 2s infinite alternate;
+            line-height: 0.9; /* Tighter line spacing for emblem text */
+        }
+        @keyframes emblemPulse {
+            0% { transform: scale(1); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+            100% { transform: scale(1.05); box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+        }
+        .school-emblem span {
+            font-size: 0.8em;
+            display: block;
+            line-height: 0.8;
+            margin-top: -5px;
+        }
+
+        h1 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--color-text-heading);
+            font-size: 3.8rem; /* Even larger */
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 6px rgba(0,0,0,0.15); /* More pronounced shadow */
+            letter-spacing: -0.03em; /* Tighter letter spacing for impact */
+        }
+        h2 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--color-primary-medium);
+            font-size: 2.5rem; /* Larger */
+            font-weight: 700;
+            margin-bottom: 40px;
+            letter-spacing: -0.02em;
+        }
+        h3 {
+            font-family: 'Montserrat', sans-serif;
+            color: var(--color-text-heading);
+            font-size: 2rem; /* Larger */
+            font-weight: 700;
+            margin-top: 40px;
+            margin-bottom: 20px;
+            border-bottom: 3px solid var(--color-primary-light); /* More pronounced line */
+            padding-bottom: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            padding: 25px 0;
+            transition: background-color 0.4s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 20px; /* More rounded */
+            background-color: rgba(var(--color-secondary-cream), 0.8); /* Slightly transparent */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+        h3:hover {
+            background-color: rgba(196, 224, 249, 0.3); /* More noticeable hover */
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        }
+        h3 .arrow-icon {
+            transition: transform 0.3s ease;
+            font-size: 1.3em; /* Larger arrow */
+            color: var(--color-primary-medium);
+        }
+        h3.expanded .arrow-icon {
+            transform: rotate(90deg);
+        }
+
+        p {
+            font-size: 1.1rem; /* Slightly larger body text */
+            line-height: 1.8; /* More comfortable line height */
+            margin-bottom: 15px;
+            text-align: justify;
+            color: var(--color-text-body);
+            padding: 0 10px; /* Add some horizontal padding to paragraphs */
+        }
+        .highlight {
+            font-weight: 700;
+            color: var(--color-accent-red);
+        }
+        .info-card-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.7s ease-out, opacity 0.7s ease-out; /* Longer, smoother transition */
+            opacity: 0;
+            padding: 0 20px; /* More internal padding */
+        }
+        .info-card-content.expanded {
+            max-height: 2000px; /* Large enough for content */
+            opacity: 1;
+            padding: 25px 20px; /* Padding when expanded */
+        }
+
+        .section {
+            background-color: var(--color-secondary-cream);
+            border-radius: 25px; /* More rounded */
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08); /* More defined shadow */
+            margin-bottom: 25px;
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+        .section:hover {
+            transform: translateY(-8px); /* More pronounced lift */
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+        .interactive-section {
+            background: linear-gradient(to top left, var(--color-primary-light), rgba(196, 224, 249, 0.6)); /* More vibrant gradient */
+            border-radius: 30px;
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            align-items: center;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            border: 3px solid var(--color-primary-medium); /* More pronounced border */
+            position: relative;
+            overflow: hidden; /* For the subtle pattern */
+        }
+        /* Subtle background pattern for interactive section */
+        .interactive-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%236FA8DC' fill-opacity='0.1'%3E%3Cpath d='M36 34.5V29h-2v5.5h-5.5v2H34V42h2v-5.5h5.5v-2H36zm-12 0V29h-2v5.5H18v2h5.5V42h2v-5.5h5.5v-2H24zm12-12V17h-2v5.5h-5.5v2H34V30h2v-5.5h5.5v-2H36zm-12 0V17h-2v5.5H18v2h5.5V30h2v-5.5h5.5v-2H24z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background-size: 60px 60px;
+            opacity: 0.5;
+            z-index: 0;
+        }
+
+        .control-buttons-freq {
+            display: flex;
+            gap: 20px; /* More space */
+            margin-bottom: 25px;
+            justify-content: center;
+            position: relative; /* To ensure buttons are above pattern */
+            z-index: 1;
+        }
+        .control-btn-freq {
+            padding: 15px 30px; /* More padding */
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smoother cubic bezier transition */
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            background-color: var(--color-primary-medium);
+            color: white;
+            border: none;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+            letter-spacing: 0.02em;
+        }
+        .control-btn-freq:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+            background-color: var(--color-primary-dark);
+        }
+        .control-btn-freq:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+        }
+        .control-btn-freq.active {
+            background-color: var(--color-primary-dark);
+            box-shadow: inset 0 4px 10px rgba(0,0,0,0.4);
+            transform: translateY(2px);
+            border: 2px solid var(--color-primary-light);
+        }
+        .control-btn-freq.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            background-color: var(--color-secondary-light-grey);
+            box-shadow: none;
+            transform: none;
+            color: var(--color-text-body);
+        }
+        .metrics {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            flex-wrap: wrap;
+            gap: 25px;
+            position: relative;
+            z-index: 1;
+        }
+        .metric-box {
+            background-color: var(--color-secondary-cream);
+            border-radius: 20px;
+            padding: 25px 30px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            min-width: 180px; /* Wider */
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.25s ease-in-out, box-shadow 0.25s ease;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+        .metric-box:hover {
+            transform: scale(1.07); /* More pronounced scale */
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
+        }
+        .metric-box strong {
+            color: var(--color-text-heading);
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        .metric-value {
+            font-size: 2.8rem; /* Even larger values */
+            font-weight: 800;
+            color: var(--color-primary-medium);
+            text-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            animation: valuePulse 0.3s ease-out;
+        }
+        @keyframes valuePulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .motor-visual {
+            width: 180px; /* Even larger motor */
+            height: 180px;
+            background: radial-gradient(circle at center, var(--color-primary-light) 0%, var(--color-primary-medium) 100%);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            margin-top: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            border: 6px solid var(--color-secondary-cream);
+            overflow: hidden;
+            transition: transform 0.4s ease-out, box-shadow 0.5s ease;
+            z-index: 1;
+        }
+        .motor-visual.running {
+            animation: motorGlow 2s infinite alternate ease-in-out;
+        }
+        @keyframes motorGlow {
+            from { box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); }
+            to { box-shadow: 0 10px 50px rgba(42, 82, 138, 0.9); } /* Intense blue glow */
+        }
+
+        .motor-shaft {
+            width: 35px;
+            height: 35px;
+            background-color: var(--color-secondary-light-grey);
+            border-radius: 50%;
+            position: absolute;
+            z-index: 2;
+            box-shadow: inset 0 0 8px rgba(0,0,0,0.4);
+        }
+        .motor-indicator {
+            width: 80px;
+            height: 10px;
+            background-color: var(--color-accent-red);
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform-origin: 50% 50%; /* Corrected: rotate around its center */
+            transform: translate(-50%, -50%) rotate(0deg);
+            transition: transform 0.01s linear; /* Even faster for smoother rotation */
+            z-index: 1;
+            border-radius: 5px;
+        }
+        .footer-info {
+            font-size: 0.95rem;
+            color: var(--color-text-body);
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--color-secondary-light-grey);
+            opacity: 0.85;
+            line-height: 1.6;
+        }
+        .image-placeholder {
+            width: 100%;
+            height: 220px; /* Taller */
+            background-color: var(--color-secondary-light-grey);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--color-text-body);
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin: 25px 0;
+            border: 3px dashed rgba(42, 82, 138, 0.6); /* Blue dashed border */
+            overflow: hidden;
+            opacity: 0.9;
+        }
+        .image-placeholder svg {
+            max-width: 80%;
+            max-height: 80%;
+            margin-bottom: 10px;
+            color: var(--color-primary-medium);
+        }
+        .button-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 25px;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+        .control-button {
+            padding: 15px 35px; /* More padding */
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+            letter-spacing: 0.02em;
+        }
+        .control-button:hover {
+            transform: translateY(-6px); /* Larger displacement */
+            box-shadow: 0 12px 30px rgba(0,0,0,0.35);
+        }
+        .control-button:active {
+            transform: translateY(0);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+        }
+        .start-button {
+            background-color: var(--color-accent-green);
+            color: white;
+            border: none;
+        }
+        .start-button:hover {
+                background-color: #27AE60; /* Darker green */
+        }
+        .stop-button {
+            background-color: var(--color-accent-red);
+            color: white;
+            border: none;
+        }
+        .stop-button:hover {
+            background-color: #C0392B; /* Darker red */
+        }
+        .status-message {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background-color: rgba(196, 224, 249, 0.9); /* More opaque */
+            color: var(--color-primary-dark);
+            padding: 12px 20px;
+            border-radius: 10px;
+            border: 2px solid var(--color-primary-medium);
+            font-size: 1rem;
+            font-weight: 600;
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out, transform 0.5s ease-out;
+            z-index: 10;
+            transform: scale(0.7);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .status-message.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+        /* Chart specific styles */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px; /* Wider */
+            height: 350px; /* Taller */
+            margin: 0 auto 30px auto;
+            background-color: var(--color-secondary-cream);
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.8);
+            z-index: 1;
+        }
+
+        /* V/Hz Visualizer */
+        .vhz-visualizer {
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            gap: 25px; /* More space */
+            height: 120px; /* Taller */
+            width: 100%;
+            max-width: 300px; /* Wider */
+            margin-top: 20px;
+            margin-bottom: 30px;
+            background-color: rgba(196, 224, 249, 0.4);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.15);
+            border: 1px solid var(--color-primary-light);
+            z-index: 1;
+        }
+        .vhz-bar-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px; /* More space */
+        }
+        .vhz-bar {
+            width: 40px; /* Wider */
+            background-color: var(--color-primary-medium);
+            border-radius: 8px;
+            transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1); /* Smoother cubic bezier transition */
+            box-shadow: inset 0 3px 8px rgba(0,0,0,0.3);
+            border: 2px solid rgba(255,255,255,0.6);
+        }
+        .vhz-bar.voltage { background-color: var(--color-accent-green); }
+        .vhz-bar-label {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--color-text-heading);
+            opacity: 0.95;
+        }
+        /* Power Efficiency Bar */
+        .power-efficiency-container {
+            width: 90%;
+            max-width: 550px; /* Wider */
+            margin-top: 30px;
+            background-color: var(--color-secondary-light-grey);
+            border-radius: 15px;
+            height: 30px; /* Taller */
+            overflow: hidden;
+            box-shadow: inset 0 3px 8px rgba(0,0,0,0.25);
+            border: 2px solid rgba(255,255,255,0.8);
+            position: relative;
+            z-index: 1;
+        }
+        .power-efficiency-bar {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(to right, var(--color-accent-orange), #FFD54F);
+            transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1); /* Slower, smoother cubic bezier transition */
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 800;
+            color: var(--color-primary-dark); /* Dark text for contrast */
+            text-shadow: 0 0 4px rgba(255,255,255,0.9);
+        }
+        .power-efficiency-bar.high {
+            background: linear-gradient(to right, #27AE60, var(--color-accent-green));
+        }
+        .power-efficiency-bar.medium {
+            background: linear-gradient(to right, var(--color-accent-orange), #FFD54F);
+        }
+        .power-efficiency-bar.low {
+            background: linear-gradient(to right, #C0392B, var(--color-accent-red));
+        }
+
+        /* Formula styling */
+        .formula {
+            font-family: 'monospace', monospace; /* Monospace for formulas */
+            font-weight: bold;
+            font-size: 1.15rem;
+            color: var(--color-primary-dark);
+            background-color: rgba(var(--color-primary-light), 0.15); /* Lighter blue background */
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 20px auto;
+            display: block;
+            width: fit-content;
+            box-shadow: inset 0 1px 5px rgba(0,0,0,0.1);
+            border: 1px solid rgba(var(--color-primary-light), 0.5);
+        }
+
+        /* Signatures / Personalization */
+        .acknowledgments-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--color-secondary-light-grey);
+        }
+        .acknowledgments-heading {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--color-text-heading);
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.08);
+        }
+        .acknowledgments-text {
+            font-size: 1.05rem;
+            color: var(--color-text-body);
+            margin-top: 10px;
+            max-width: 600px;
+            line-height: 1.6;
+        }
+        .signature-group {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .signature-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            opacity: 0.9;
+            transition: opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: help; /* Indicate hover effect */
+        }
+        .signature-item:hover {
+            opacity: 1;
+            transform: translateY(-8px) scale(1.05); /* More pronounced lift and scale */
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        .signature-icon {
+            width: 70px; /* Larger icon */
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 3rem; /* Larger font */
+            color: var(--color-secondary-cream);
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            border: 3px solid var(--color-primary-light);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+        }
+        .signature-name {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1.2rem; /* Larger name */
+            font-weight: 700;
+            color: var(--color-text-heading);
+            transition: color 0.3s ease;
+        }
+        .signature-item:hover .signature-name {
+            color: var(--color-primary-medium);
+        }
+
+        /* Specific styles for student vs. teacher signatures */
+        .student-signature .signature-icon {
+            background-color: var(--color-primary-medium); /* Blue for students */
+        }
+        .student-signature:hover .signature-icon {
+            background-color: var(--color-primary-dark);
+            border-color: var(--color-accent-green); /* Green highlight on hover */
+        }
+
+        .teacher-signature .signature-icon {
+            background-color: var(--color-primary-dark); /* Darker blue for teachers */
+            font-size: 2.8rem; /* Slightly smaller for 'P' or 'T' */
+        }
+        .teacher-signature:hover .signature-icon {
+            background-color: var(--color-primary-medium);
+            border-color: var(--color-accent-orange); /* Orange highlight for teachers */
+        }
+        
+        /* Custom text blocks for varied layout */
+        .text-segment {
+            background-color: rgba(var(--color-primary-light), 0.08); /* Very light blue background */
+            border-left: 4px solid var(--color-primary-medium);
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 8px;
+            text-align: left;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            transition: background-color 0.3s ease, border-color 0.3s ease;
+        }
+        .text-segment:hover {
+            background-color: rgba(var(--color-primary-light), 0.15);
+            border-left-color: var(--color-accent-green); /* Highlight on hover */
+        }
+        .text-segment strong {
+            color: var(--color-primary-dark);
+        }
+
+        /* New: Project Milestones/Timeline */
+        .milestones-section {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            margin-top: 40px;
+            padding: 30px;
+            background-color: rgba(var(--color-primary-light), 0.1);
+            border-radius: 25px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.7);
+        }
+        .milestone-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            text-align: left;
+            padding: 15px;
+            background-color: var(--color-secondary-cream);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+        .milestone-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        .milestone-icon {
+            font-size: 2.5rem;
+            color: var(--color-primary-medium);
+            flex-shrink: 0;
+            line-height: 1;
+        }
+        .milestone-content strong {
+            color: var(--color-primary-dark);
+            font-size: 1.15rem;
+            display: block;
+            margin-bottom: 5px;
+        }
+        .milestone-content p {
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 0;
+            padding: 0; /* Remove extra padding from global p */
+        }
+
+        /* New Interactive Game: Energy Saving Calculator */
+        .energy-calculator-section {
+            background: linear-gradient(to bottom right, rgba(255, 193, 7, 0.2), rgba(255, 193, 7, 0.4)); /* Amber gradient */
+            border-radius: 30px;
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            align-items: center;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            border: 3px solid var(--color-accent-orange);
+            position: relative;
+            overflow: hidden;
+        }
+        .energy-calculator-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23FF9800' fill-opacity='0.1'%3E%3Cpath d='M36 34.5V29h-2v5.5h-5.5v2H34V42h2v-5.5h5.5v-2H36zm-12 0V29h-2v5.5H18v2h5.5V42h2v-5.5h5.5v-2H24zm12-12V17h-2v5.5h-5.5v2H34V30h2v-5.5h5.5v-2H36zm-12 0V17h-2v5.5H18v2h5.5V30h2v-5.5h5.5v-2H24z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            background-size: 60px 60px;
+            opacity: 0.5;
+            z-index: 0;
+        }
+        .energy-calculator-input-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .energy-calculator-input {
+            padding: 12px 18px;
+            border-radius: 10px;
+            border: 2px solid var(--color-primary-light);
+            font-size: 1.1rem;
+            width: 120px;
+            text-align: center;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            outline: none;
+        }
+        .energy-calculator-input:focus {
+            border-color: var(--color-accent-orange);
+            box-shadow: 0 0 0 4px rgba(255, 152, 0, 0.2);
+        }
+        .energy-calculator-button {
+            padding: 15px 30px;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            background-color: var(--color-accent-orange);
+            color: white;
+            border: none;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.15);
+            letter-spacing: 0.02em;
+        }
+        .energy-calculator-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+            background-color: #FB8C00; /* Darker orange */
+        }
+        .energy-calculator-button:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.25);
+        }
+        .energy-result {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--color-primary-dark);
+            margin-top: 20px;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.08);
+            position: relative;
+            z-index: 1;
+        }
+        .energy-explanation {
+            font-size: 1rem;
+            color: var(--color-text-body);
+            max-width: 600px;
+            margin-top: 10px;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            body {
+                padding: 20px;
+            }
+            .container {
+                padding: 30px;
+                gap: 25px;
+                border-radius: 20px;
+            }
+            .school-emblem {
+                width: 80px;
+                height: 80px;
+                font-size: 2rem;
+                top: 15px;
+                left: 20px;
+            }
+            h1 {
+                font-size: 2.8rem;
+                margin-top: 80px; /* Adjust for emblem */
+            }
+            h2 {
+                font-size: 1.8rem;
+            }
+            h3 {
+                font-size: 1.6rem;
+                padding: 15px 0;
+                border-radius: 15px;
+            }
+            p {
+                font-size: 1rem;
+                padding: 0 5px;
+            }
+            .metrics {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .metric-box {
+                min-width: unset;
+                width: 100%;
+                padding: 15px;
+                border-radius: 15px;
+            }
+            .metric-value {
+                font-size: 2.2rem;
+            }
+            .motor-visual {
+                width: 140px;
+                height: 140px;
+                margin-top: 30px;
+            }
+            .motor-indicator {
+                width: 70px;
+            }
+            .image-placeholder {
+                height: 180px;
+                border-radius: 15px;
+            }
+            .button-group, .control-buttons-freq {
+                flex-direction: column;
+                width: 100%;
+                gap: 10px;
+            }
+            .control-button, .control-btn-freq {
+                width: 100%;
+                padding: 12px 25px;
+                font-size: 1.1rem;
+                border-radius: 10px;
+            }
+            .status-message {
+                position: static;
+                margin-top: 15px;
+                width: calc(100% - 40px);
+                text-align: center;
+                padding: 10px 15px;
+                font-size: 0.9rem;
+                border-radius: 8px;
+            }
+            .chart-container {
+                height: 250px;
+                padding: 15px;
+                border-radius: 15px;
+            }
+            .vhz-visualizer {
+                height: 90px;
+                gap: 15px;
+                padding: 10px;
+                border-radius: 10px;
+            }
+            .vhz-bar {
+                width: 35px;
+            }
+            .vhz-bar-label {
+                font-size: 0.85rem;
+            }
+            .power-efficiency-container {
+                height: 25px;
+                border-radius: 12px;
+            }
+            .power-efficiency-bar {
+                font-size: 0.75rem;
+            }
+            .acknowledgments-section {
+                gap: 20px;
+            }
+            .signature-group {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .signature-item {
+                width: 100%;
+            }
+            .signature-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 2.5rem;
+            }
+            .signature-name {
+                font-size: 1rem;
+            }
+            .milestones-section {
+                padding: 20px;
+            }
+            .milestone-item {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 10px;
+            }
+            .milestone-icon {
+                font-size: 2rem;
+            }
+            .acknowledgments-text {
+                font-size: 0.95rem;
+                padding: 0 10px;
+            }
+            .energy-calculator-input-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+            .energy-calculator-input {
+                width: 100%;
+            }
+            .energy-calculator-button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- School Emblem -->
+        <div class="school-emblem">
+            EEST<br><span>N°1</span>
+        </div>
+
+        <h2>Implementación de VFD en la E.E.S.T. N° 1 “Islas Malvinas”</h2>
+
+        <p>Este proyecto aborda la revitalización de un <strong>Variador de Frecuencia (VFD) Allen-Bradley 1305</strong> inactivo por décadas. Este dispositivo es clave en la industria moderna, transformando la energía eléctrica para controlar con precisión la velocidad de motores asíncronos. Su implementación demuestra el poder de la electrónica de potencia para optimizar el rendimiento, la eficiencia energética y la vida útil de los equipos industriales. ¡Explora cómo funciona y su impacto!</p>
+
+        <div class="interactive-section" id="interactiveSection">
+            <h3>Simulación en Vivo <span role="img" aria-label="mano tocando">🖐️</span></h3>
+            <p>Inicia el motor y selecciona una frecuencia para ver el impacto en tiempo real.</p>
+
+            <div class="button-group">
+                <button id="startButton" class="control-button start-button">Iniciar Motor</button>
+                <button id="stopButton" class="control-button stop-button">Detener Motor</button>
+            </div>
+
+            <div class="control-buttons-freq mt-4">
+                <button data-freq="10" class="control-btn-freq" id="freq10Btn">10 Hz</button>
+                <button data-freq="30" class="control-btn-freq" id="freq30Btn">30 Hz</button>
+                <button data-freq="60" class="control-btn-freq" id="freq60Btn">60 Hz</button>
+            </div>
+
+            <div class="metrics">
+                <div class="metric-box">
+                    <strong>Frecuencia</strong>
+                    <span id="freq-readout" class="metric-value">0 Hz</span>
+                </div>
+                <div class="metric-box">
+                    <strong>Velocidad</strong>
+                    <span id="rpm-readout" class="metric-value">0 RPM</span>
+                </div>
+                <div class="metric-box">
+                    <strong>Voltaje</strong>
+                    <span id="volt-readout" class="metric-value">0 V</span>
+                </div>
+                <div class="metric-box">
+                    <strong>Corriente</strong>
+                    <span id="curr-readout" class="metric-value">0 A</span>
+                </div>
+            </div>
+
+            <!-- New V/Hz Visualizer -->
+            <div class="vhz-visualizer">
+                <div class="vhz-bar-container">
+                    <div id="vhzFreqBar" class="vhz-bar" style="height: 0%;"></div>
+                    <span class="vhz-bar-label">Frecuencia</span>
+                </div>
+                <div class="vhz-bar-container">
+                    <div id="vhzVoltBar" class="vhz-bar voltage" style="height: 0%;"></div>
+                    <span class="vhz-bar-label">Voltaje</span>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="performanceChart"></canvas>
+            </div>
+
+            <div class="motor-visual" id="motorVisual">
+                <div class="motor-shaft"></div>
+                <div class="motor-indicator" id="motorIndicator"></div>
+            </div>
+
+            <!-- New Power Efficiency Bar -->
+            <div class="power-efficiency-container">
+                <div id="powerEfficiencyBar" class="power-efficiency-bar" style="width: 0%;">
+                    <span id="powerEfficiencyText">Eficiencia: 0%</span>
+                </div>
+            </div>
+
+            <div id="statusMessage" class="status-message">Motor Detenido</div>
+        </div>
+
+        <!-- New Section: Energy Saving Calculator -->
+        <div class="energy-calculator-section">
+            <h3>Calculadora de Ahorro Energético <span role="img" aria-label="hoja">🍃</span></h3>
+            <p class="energy-explanation">Descubre el impacto de la reducción de velocidad en el consumo de energía para aplicaciones como bombas y ventiladores, basado en las leyes de afinidad ($Potencia \propto Velocidad^3$).</p>
+            <div class="energy-calculator-input-group">
+                <label for="speedReductionInput" class="font-semibold text-lg text-gray-700">Reducción de Velocidad (%):</label>
+                <input type="number" id="speedReductionInput" min="0" max="99" value="20" class="energy-calculator-input">
+                <button id="calculateEnergySaving" class="energy-calculator-button">Calcular Ahorro</button>
+            </div>
+            <div class="energy-result" id="energySavingResult">Ahorro Teórico: 0%</div>
+            <p class="energy-explanation">Una pequeña reducción en la velocidad puede generar un ahorro energético significativo. Por ejemplo, reducir la velocidad un 20% puede ahorrarte casi la mitad de la energía.</p>
+        </div>
+
+
+        <!-- New Section: Nuestra Historia en el Proyecto -->
+        <div class="section milestones-section">
+            <h3>Historia del Proyecto: Un Desafío Superado por Nuestros Alumnos <span role="img" aria-label="cohete">🚀</span></h3>
+            <div class="milestone-item">
+                <span class="milestone-icon">📚</span>
+                <div class="milestone-content">
+                    <strong>El Primer Contacto: Un Manual en Inglés</strong>
+                    <p>El proyecto comenzó con el manual de fábrica del VFD, un libro denso y completamente en inglés. El primer gran desafío para los alumnos fue la traducción y comprensión autónoma de sus complejas instrucciones y diagramas.</p>
+                </div>
+            </div>
+            <div class="milestone-item">
+                <span class="milestone-icon">🔍</span>
+                <div class="milestone-content">
+                    <strong>Diagnóstico y Rescate: El VFD Dormido</strong>
+                    <p>Se encontró el variador inactivo por décadas, considerado inservible. El diagnóstico inicial reveló errores persistentes en su memoria, que el equipo de alumnos tuvo que borrar para darle una nueva vida.</p>
+                </div>
+            </div>
+            <div class="milestone-item">
+                <span class="milestone-icon">💡</span>
+                <div class="milestone-content">
+                    <strong>La Chispa del Éxito: Primera Señal de Vida</strong>
+                    <p>Tras horas de investigación y pruebas, los alumnos lograron la primera señal de encendido. Fue el momento en que se confirmó que el desafío era posible de superar.</p>
+                </div>
+            </div>
+            <div class="milestone-item">
+                <span class="milestone-icon">📐</span>
+                <div class="milestone-content">
+                    <strong>Diseño Personalizado: El Tablero 3D</strong>
+                    <p>El equipo de alumnos diseñó en <strong>AutoCAD</strong> y luego imprimió en <strong>PLA 3D</strong> su propio tablero de control, integrando potenciometros y selectores de forma ergonómica y segura.</p>
+                </div>
+            </div>
+            <div class="milestone-item">
+                <span class="milestone-icon">⚡</span>
+                <div class="milestone-content">
+                    <strong>Conexiones y Calibración: El Arte de la Precisión</strong>
+                    <p>El cableado meticuloso y la configuración precisa de cada parámetro del VFD fueron esenciales. Cada conexión, cada ajuste, fue una lección de electrónica de potencia aplicada para los alumnos.</p>
+                </div>
+            </div>
+            <div class="milestone-item">
+                <span class="milestone-icon">🏆</span>
+                <div class="milestone-content">
+                    <strong>Validación y Demostración: ¡El Motor en Marcha!</strong>
+                    <p>Las mediciones confirmaron el trabajo realizado por los alumnos. El motor respondía con precisión, validando el control V/Hz constante y demostrando el potencial de este VFD recuperado. ¡Un éxito rotundo!</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section info-card">
+            <h3 class="info-card-header">El VFD: Un Desafío y su Resurrección Tecnológica <span role="img" aria-label="chip">⚡</span> <span class="arrow-icon">▶️</span></h3>
+            <div class="info-card-content">
+                <p>La historia de este proyecto comenzó con un desafío: revivir un <strong>Variador de Frecuencia (VFD) Allen-Bradley 1305</strong> que había permanecido inactivo, casi olvidado, en la escuela por décadas. Considerado por muchos como inservible, este equipo se convirtió en el epicentro de la investigación y el aprendizaje liderado por los alumnos.</p>
+                <div class="text-segment">
+                    <strong>La Misión de los Alumnos:</strong> Diagnosticar, reparar y aplicar este VFD para controlar la velocidad de un motor trifásico. Más allá de la electrónica, era una prueba de su capacidad de **perseverancia, investigación autónoma y resolución de problemas** ante un equipo que había resistido intentos previos de reactivación.
+                </div>
+                <p>Un VFD es un dispositivo electrónico crucial que controla la velocidad de un motor variando la frecuencia y el voltaje de su alimentación. Es la clave para la eficiencia energética y la automatización industrial moderna.</p>
+                <div class="image-placeholder">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucuce-power-circle">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 8v8"/>
+                        <path d="M8.3 14.7l7.4-7.4"/>
+                    </svg>
+                    <span>VFD: El Cerebro Rescatado</span>
+                </div>
+                <h4>Ventajas Clave Comprobadas:</h4>
+                <ul class="list-disc list-inside text-left mx-auto max-w-md">
+                    <li><strong class="highlight">Ahorro Energético:</strong> La potencia es proporcional a la Velocidad al cubo. ¡Un impacto real!</li>
+                    <li><strong class="highlight">Control Preciso:</strong> Ajuste exacto de velocidad, fundamental para cualquier proceso.</li>
+                    <li><strong class="highlight">Arranque/Parada Suaves:</strong> Protege el motor y la maquinaria, prolongando su vida útil.</li>
+                    <li><strong class="highlight">Protección Integral:</strong> Múltiples salvaguardas que garantizan una operación segura.</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section info-card">
+            <h3 class="info-card-header">El Corazón del Sistema: El Motor Asíncrono Trifásico <span role="img" aria-label="motor">⚙️</span> <span class="arrow-icon">▶️</span></h3>
+            <div class="info-card-content">
+                <p>El motor asíncrono trifásico, de 1/2 HP, es el "caballo de batalla" industrial. Su funcionamiento se basa en un **campo magnético giratorio** en el estator que induce corrientes en el rotor, generando el torque.</p>
+                <div class="text-segment">
+                    <strong>Comprensión Clave para los Alumnos:</strong> La velocidad síncrona (ns) depende de la frecuencia (f) y los polos (P). Descifrar esta relación fue fundamental para entender cómo el VFD manipula la velocidad.
+                </div>
+                <p class="formula">ns = (120 * f) / P (RPM)</p>
+                <p>El rotor siempre gira a una velocidad ligeramente inferior (<strong>deslizamiento s</strong>). Este deslizamiento es vital para generar torque. El motor de 4 polos a 60 Hz (1800 RPM síncronas teóricas) tiene una velocidad nominal de 1400 RPM, lo que indica un deslizamiento de ~22.2%. Esta peculiaridad llevó a los alumnos a investigar más a fondo las características de los motores.</p>
+                <div class="image-placeholder">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-zap">
+                        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                    </svg>
+                    <span>Motor: La Fuerza Impulsora</span>
+                </div>
+                <p>Las <strong>curvas par-velocidad</strong> describen el torque disponible. El VFD permitió controlar estas curvas, logrando arranques suaves y un par constante en todo el rango de operación, algo que un arranque directo no podría ofrecer.</p>
+            </div>
+        </div>
+
+        <div class="section info-card">
+            <h3 class="info-card-header">Metodología del Proyecto: De la Teoría a la Realidad <span role="img" aria-label="engranaje">🛠️</span> <span class="arrow-icon">▶️</span></h3>
+            <div class="info-card-content">
+                <p>La implementación de este proyecto fue un viaje desde la teoría hasta la práctica, donde cada paso fue una lección de ingeniería aplicada.</p>
+                <div class="text-segment">
+                    <strong>El Proceso de Implementación Liderado por los Alumnos Incluyó:</strong> El diagnóstico del VFD, el diseño del tablero de control en <strong>AutoCAD</strong> (con partes impresas en <strong>PLA 3D</strong>), el cableado meticuloso y la configuración precisa del variador. Cada etapa requirió investigación y pruebas por parte del equipo.
+                </div>
+                <p>Las mediciones registradas confirmaron el comportamiento esperado: la tensión de salida es directamente proporcional a la frecuencia (el control V/Hz constante) y la velocidad del motor se ajusta con exactitud. Esto no solo valida el funcionamiento del VFD, sino que lo convierte en un recurso educativo invaluable para las futuras generaciones de técnicos.</p>
+                <div class="image-placeholder">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-layout-dashboard">
+                        <rect width="7" height="9" x="3" y="3" rx="1"/>
+                        <rect width="7" height="5" x="14" y="3" rx="1"/>
+                        <rect width="7" height="9" x="14" y="12" rx="1"/>
+                        <rect width="7" height="5" x="3" y="16" rx="1"/>
+                    </svg>
+                    <span>Tablero de Control: Diseño del Proyecto</span>
+                </div>
+                <h4>Mediciones Clave:</h4>
+                <ul class="list-disc list-inside text-left mx-auto max-w-md">
+                    <li>10 Hz: ~63.3 V, 0.70 A, ~230 RPM</li>
+                    <li>30 Hz: ~190.0 V, 0.85 A, ~700 RPM</li>
+                    <li>60 Hz: ~380.0 V, 0.77 A, ~1400 RPM</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section info-card">
+            <h3 class="info-card-header">Más Allá del Aula: Impacto y Proyección <span role="img" aria-label="fábrica">🏭</span> <span class="arrow-icon">▶️</span></h3>
+            <div class="info-card-content">
+                <p>Los VFDs son indispensables para optimizar rendimiento y ahorrar energía en la industria. Este proyecto permitió comprender su aplicación real en diversos sectores.</p>
+                <div class="text-segment">
+                    <strong>Proyección del Trabajo:</strong> Desde bombas y ventiladores (donde el ahorro es exponencial, Potencia proporcional a Velocidad al cubo) hasta cintas transportadoras y compresores, los VFDs son el futuro de la eficiencia industrial.
+                </div>
+                <p>Este trabajo abre puertas a futuras exploraciones: desde el control por lazo cerrado y el análisis de armónicos, hasta estudios con diferentes cargas. Demuestra que, con dedicación y el conocimiento adecuado, se puede transformar tecnología inactiva en una fuente de aprendizaje y progreso continuo.</p>
+                <div class="image-placeholder">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-leaf">
+                        <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 20 10.3 20 16a8 8 0 0 1-8 8c-2.3 0-4.6-.7-6.7-2a2 2 0 = 0 1-1.1-1.7c-.4-1.4 0-2.5.6-3.4C7.2 7.5 7 6 7 6H3a2 2 0 0 0-2 2v4.5c0 2.8 1.5 4.3 2.6 5.4A10 10 0 0 0 11 20Z"/>
+                    </svg>
+                    <span>Eficiencia y Sostenibilidad: Contribución del Proyecto</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="acknowledgments-section">
+            <h3 class="acknowledgments-heading">Agradecimientos y Reconocimientos</h3>
+            <p class="acknowledgments-text">Este proyecto fue posible gracias al esfuerzo conjunto de la comunidad educativa de la E.E.S.T. N° 1 “Islas Malvinas”. Agradecemos a la institución por los recursos y el espacio brindado. Un especial reconocimiento a nuestros asesores docentes, Néstor Tedesco y Héctor Alejandro Garralda, por su invaluable guía y apoyo constante. Su dedicación es clave para la motivación y el aprendizaje de los alumnos. Extendemos nuestro agradecimiento a los alumnos de 7mo año por su colaboración en la impresión en 3D, además a compañeros y profesores que han ayudado en el proceso. Este proyecto es un testimonio de la curiosidad, tenacidad y trabajo en equipo de sus alumnos.</p>
+            <h4 class="acknowledgments-heading" style="font-size: 1.5rem; margin-top: 20px;">Asesores Docentes</h4>
+            <div class="signature-group">
+                <div class="signature-item teacher-signature">
+                    <div class="signature-icon">N</div>
+                    <span class="signature-name">Néstor Tedesco</span>
+                </div>
+                <div class="signature-item teacher-signature">
+                    <div class="signature-icon">H</div>
+                    <span class="signature-name">Héctor Alejandro Garralda</span>
+                </div>
+            </div>
+            <h4 class="acknowledgments-heading" style="font-size: 1.5rem; margin-top: 20px;">Alumnos Exponentes del Proyecto</h4>
+            <div class="signature-group">
+                <div class="signature-item student-signature">
+                    <div class="signature-icon">L</div>
+                    <span class="signature-name">Lorenzo De Azevedo</span>
+                </div>
+                <div class="signature-item student-signature">
+                    <div class="signature-icon">R</div>
+                    <span class="signature-name">Roger Lescano Cuarterola</span>
+                </div>
+            </div>
+        </div>
+
+        <p class="footer-info">E.E.S.T. N° 1 “Islas Malvinas” - Rauch, Pcia. de Buenos Aires © 2025 - Un proyecto hecho con curiosidad, tenacidad y trabajo en equipo.</p>
+    </div>
+
+    <script>
+        const freqReadout = document.getElementById('freq-readout');
+        const voltReadout = document.getElementById('volt-readout');
+        const currReadout = document.getElementById('curr-readout');
+        const rpmReadout = document.getElementById('rpm-readout');
+        const motorIndicator = document.getElementById('motorIndicator');
+        const startButton = document.getElementById('startButton');
+        const stopButton = document.getElementById('stopButton');
+        const statusMessage = document.getElementById('statusMessage');
+        const motorVisual = document.getElementById('motorVisual');
+        const freqButtons = document.querySelectorAll('.control-btn-freq');
+        const vhzFreqBar = document.getElementById('vhzFreqBar');
+        const vhzVoltBar = document.getElementById('vhzVoltBar');
+        const powerEfficiencyBar = document.getElementById('powerEfficiencyBar');
+        const powerEfficiencyText = document.getElementById('powerEfficiencyText');
+        
+        // Info card elements
+        const infoCards = document.querySelectorAll('.info-card');
+
+        // Energy Saving Calculator elements
+        const speedReductionInput = document.getElementById('speedReductionInput');
+        const calculateEnergySavingBtn = document.getElementById('calculateEnergySaving');
+        const energySavingResult = document.getElementById('energySavingResult');
+
+        // Motor data (extracted from your project)
+        const motorPoles = 4;
+        const nominalFrequency = 60; // Hz
+        const nominalVoltage = 380; // V
+        const nominalSpeed = 1400; // RPM (measured at 60Hz)
+        const nominalPower = 373; // W (0.5 HP)
+        const nominalTorque = 2.54; // Nm (calculated)
+
+        // Calculate constant V/Hz ratio
+        const vhzRatio = (nominalVoltage / nominalFrequency).toFixed(2);
+
+        // Calculate slip (s) based on nominal speed at 60Hz
+        const synchronousSpeedAt60Hz = (120 * nominalFrequency) / motorPoles; // 1800 RPM
+        const slip = (synchronousSpeedAt60Hz - nominalSpeed) / synchronousSpeedAt60Hz; // (1800 - 1400) / 1800 = 0.2222...
+
+        let animationFrameId;
+        let motorRunning = false;
+        let currentSelectedFreq = 0; // Track the currently selected frequency
+
+        // Data points for the chart and readouts
+        const dataPoints = {
+            '10': { freq: '10 Hz', volt: '63.3 V', curr: '0.70 A', rpm: '230', index: 0, speedVal: 230 },
+            '30': { freq: '30 Hz', volt: '190 V', curr: '0.85 A', rpm: '700', index: 1, speedVal: 700 },
+            '60': { freq: '60 Hz', volt: '380 V', curr: '0.77 A', rpm: '1400', index: 2, speedVal: 1400 }
+        };
+
+        function showStatus(message, type = 'info') {
+            statusMessage.textContent = message;
+            statusMessage.className = `status-message show`;
+            if (type === 'error') {
+                statusMessage.style.backgroundColor = '#f8d7da';
+                statusMessage.style.color = '#721c24';
+                statusMessage.style.borderColor = '#f5c6cb';
+            } else if (type === 'success') {
+                statusMessage.style.backgroundColor = 'rgba(76, 175, 80, 0.2)'; /* Greenish tint for success */
+                statusMessage.style.color = '#1b5e20';
+                statusMessage.style.borderColor = '#a5d6a7';
+            } else { /* info */
+                statusMessage.style.backgroundColor = 'rgba(255, 193, 7, 0.2)'; /* Amber tint for info */
+                statusMessage.style.color = '#ff8f00';
+                statusMessage.style.borderColor = '#ffe082';
+            }
+            setTimeout(() => {
+                statusMessage.classList.remove('show');
+            }, 3000);
+        }
+
+        function updateMotorVisualization(speed) {
+            if (!motorRunning || speed === 0) {
+                motorIndicator.style.transform = 'translate(-50%, -50%) rotate(0deg)';
+                motorVisual.classList.remove('running');
+                return;
+            }
+
+            const degreesPerSecond = speed * 6;
+            const animationDuration = speed > 0 ? (360 / degreesPerSecond) * 1000 : 0;
+
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
+
+            if (speed > 0) {
+                let startTime = null;
+                function animate(currentTime) {
+                    if (!startTime) startTime = currentTime;
+                    const elapsedTime = currentTime - startTime;
+                    const rotation = (elapsedTime / animationDuration) * 360;
+                    motorIndicator.style.transform = `translate(-50%, -50%) rotate(${rotation}deg)`;
+                    animationFrameId = requestAnimationFrame(animate);
+                }
+                animationFrameId = requestAnimationFrame(animate);
+                motorVisual.classList.add('running');
+            } else {
+                motorIndicator.style.transform = 'translate(-50%, -50%) rotate(0deg)';
+                motorVisual.classList.remove('running');
+            }
+        }
+
+        function updateMetricValue(element, value) {
+            element.textContent = value;
+            element.classList.remove('valuePulse');
+            void element.offsetWidth; // Trigger reflow
+            element.classList.add('valuePulse');
+        }
+
+        // Chart.js setup
+        const ctx = document.getElementById('performanceChart').getContext('2d');
+        const performanceChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['10 Hz', '30 Hz', '60 Hz'],
+                datasets: [
+                    {
+                        label: 'Velocidad (RPM)',
+                        data: [230, 700, 1400],
+                        borderColor: 'var(--color-primary-medium)', /* Blue */
+                        backgroundColor: 'rgba(42, 82, 138, 0.2)',
+                        tension: 0.4, /* More curve */
+                        yAxisID: 'y',
+                        pointBackgroundColor: 'var(--color-primary-medium)',
+                        pointBorderColor: 'var(--color-secondary-cream)',
+                        pointBorderWidth: 3, /* Thicker border */
+                        pointRadius: 7, /* Larger points */
+                        pointHoverRadius: 10, /* Even larger on hover */
+                    },
+                    {
+                        label: 'Tensión (V)',
+                        data: [63.3, 190.0, 380.0],
+                        borderColor: 'var(--color-accent-green)', /* Green */
+                        backgroundColor: 'rgba(46, 204, 113, 0.2)',
+                        tension: 0.4,
+                        yAxisID: 'y',
+                        pointBackgroundColor: 'var(--color-accent-green)',
+                        pointBorderColor: 'var(--color-secondary-cream)',
+                        pointBorderWidth: 3,
+                        pointRadius: 7,
+                        pointHoverRadius: 10,
+                    },
+                    {
+                        label: 'Corriente (A)',
+                        data: [0.70, 0.85, 0.77],
+                        borderColor: 'var(--color-accent-red)', /* Red */
+                        backgroundColor: 'rgba(231, 76, 60, 0.2)',
+                        type: 'bar',
+                        yAxisID: 'y1',
+                        barPercentage: 0.6, /* Thinner bars */
+                        categoryPercentage: 0.7,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
+                plugins: {
+                    tooltip: {
+                        mode: 'index',
+                        intersect: false,
+                        backgroundColor: 'var(--color-primary-dark)',
+                        titleColor: 'var(--color-secondary-cream)',
+                        bodyColor: 'var(--color-secondary-cream)',
+                        borderColor: 'var(--color-primary-medium)',
+                        borderWidth: 2, /* Thicker border */
+                        cornerRadius: 10, /* More rounded */
+                        padding: 15, /* More padding */
+                    },
+                    legend: {
+                        labels: {
+                            color: 'var(--color-text-heading)',
+                            font: {
+                                size: 15, /* Larger legend text */
+                                weight: '600',
+                            },
+                            boxWidth: 20, /* Larger color box */
+                            padding: 20, /* More padding between legend items */
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        title: {
+                            display: true,
+                            text: 'Velocidad (RPM) / Tensión (V)',
+                            color: 'var(--color-text-body)',
+                            font: { size: 16, weight: '600' } /* Larger title */
+                        },
+                        ticks: { color: 'var(--color-text-body)', font: { size: 12 } },
+                        grid: { color: 'rgba(var(--color-secondary-light-grey), 0.7)' } /* More visible grid */
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        title: {
+                            display: true,
+                            text: 'Corriente (A)',
+                            color: 'var(--color-text-body)',
+                            font: { size: 16, weight: '600' }
+                        },
+                        grid: {
+                            drawOnChartArea: false, 
+                            color: 'rgba(var(--color-secondary-light-grey), 0.7)'
+                        },
+                        ticks: { color: 'var(--color-text-body)', font: { size: 12 } },
+                        max: 1.0 
+                    },
+                    x: {
+                        ticks: { color: 'var(--color-text-body)', font: { size: 13, weight: '600' } }, /* Larger x-axis labels */
+                        grid: { color: 'rgba(var(--color-secondary-light-grey), 0.7)' }
+                    }
+                }
+            }
+        });
+
+        function updateVHzVisualizer(freq, volt) {
+            const maxFreq = 60; // Max frequency for scaling
+            const maxVolt = 380; // Max voltage for scaling
+            const freqHeight = (freq / maxFreq) * 100;
+            const voltHeight = (volt / maxVolt) * 100;
+
+            vhzFreqBar.style.height = `${freqHeight}%`;
+            vhzVoltBar.style.height = `${voltHeight}%`;
+        }
+
+        function updatePowerEfficiency(currentSpeed) {
+            const maxSpeed = nominalSpeed; // 1400 RPM
+            // Simplified power calculation for visualization based on affinity laws
+            const theoreticalPowerRatio = Math.pow(currentSpeed / maxSpeed, 3);
+            const efficiencyPercentage = theoreticalPowerRatio * 100; // Represents the *relative* efficiency/power usage
+
+            let barColorClass = 'low';
+            if (efficiencyPercentage > 70) {
+                barColorClass = 'high';
+            } else if (efficiencyPercentage > 30) {
+                barColorClass = 'medium';
+            }
+
+            powerEfficiencyBar.style.width = `${efficiencyPercentage}%`;
+            powerEfficiencyBar.className = `power-efficiency-bar ${barColorClass}`;
+            powerEfficiencyText.textContent = `Eficiencia: ${Math.round(efficiencyPercentage)}%`;
+        }
+
+
+        function updateSimulation(freq) {
+            currentSelectedFreq = freq;
+            const data = dataPoints[freq];
+            if (data) {
+                updateMetricValue(freqReadout, data.freq);
+                updateMetricValue(voltReadout, data.volt);
+                updateMetricValue(currReadout, data.curr);
+                updateMetricValue(rpmReadout, data.rpm);
+
+                // Highlight chart point
+                performanceChart.setActiveElements([
+                    { datasetIndex: 0, index: data.index }, // Speed
+                    { datasetIndex: 1, index: data.index }, // Voltage
+                    { datasetIndex: 2, index: data.index }  // Current
+                ]);
+                performanceChart.update();
+                updateMotorVisualization(data.speedVal);
+                updateVHzVisualizer(parseFloat(data.freq), parseFloat(data.volt)); // Update V/Hz bars
+                updatePowerEfficiency(data.speedVal); // Update power efficiency bar
+            }
+            // Update active state of frequency buttons
+            freqButtons.forEach(btn => {
+                if (btn.dataset.freq === String(freq)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+
+        // Event listeners for main control buttons
+        startButton.addEventListener('click', () => {
+            if (!motorRunning) {
+                motorRunning = true;
+                freqButtons.forEach(btn => btn.classList.remove('disabled'));
+                updateSimulation('30'); // Start at 30 Hz by default
+                showStatus('Motor en marcha. ¡Elige una frecuencia!', 'success');
+            } else {
+                showStatus('El motor ya está en marcha.', 'error');
+            }
+        });
+
+        stopButton.addEventListener('click', () => {
+            if (motorRunning) {
+                motorRunning = false;
+                freqButtons.forEach(btn => {
+                    btn.classList.add('disabled');
+                    btn.classList.remove('active'); // Remove active state on stop
+                });
+                updateMetricValue(freqReadout, `0 Hz`);
+                updateMetricValue(voltReadout, `0 V`);
+                updateMetricValue(currReadout, `0 A`);
+                updateMetricValue(rpmReadout, `0 RPM`);
+                performanceChart.setActiveElements([]); // Clear chart highlight
+                performanceChart.update();
+                updateMotorVisualization(0); // Stop motor visual
+                updateVHzVisualizer(0, 0); // Reset V/Hz bars
+                updatePowerEfficiency(0); // Reset power efficiency bar
+                showStatus('Motor Detenido.', 'info');
+            } else {
+                showStatus('El motor ya está detenido.', 'error');
+            }
+        });
+
+        // Event listeners for frequency buttons
+        freqButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                if (motorRunning) {
+                    const freq = button.dataset.freq;
+                    updateSimulation(freq);
+                    showStatus(`Frecuencia ajustada a ${freq} Hz.`, 'info');
+                } else {
+                    showStatus('¡Primero inicia el motor!', 'error');
+                }
+            });
+        });
+
+        // Toggle info card content
+        infoCards.forEach(card => {
+            const header = card.querySelector('.info-card-header');
+            const content = card.querySelector('.info-card-content');
+
+            header.addEventListener('click', () => {
+                const isExpanded = content.classList.contains('expanded');
+                if (isExpanded) {
+                    content.classList.remove('expanded');
+                    header.classList.remove('expanded');
+                } else {
+                    infoCards.forEach(otherCard => {
+                        if (otherCard !== card) {
+                            otherCard.querySelector('.info-card-content').classList.remove('expanded');
+                            otherCard.querySelector('.info-card-header').classList.remove('expanded');
+                        }
+                    });
+                    content.classList.add('expanded');
+                    header.classList.add('expanded');
+                }
+            });
+        });
+
+        // Energy Saving Calculator Logic
+        calculateEnergySavingBtn.addEventListener('click', () => {
+            const reductionPercentage = parseFloat(speedReductionInput.value);
+            if (isNaN(reductionPercentage) || reductionPercentage < 0 || reductionPercentage > 99) {
+                energySavingResult.textContent = "Porcentaje inválido (0-99%)";
+                energySavingResult.style.color = 'var(--color-accent-red)';
+                return;
+            }
+
+            const speedRatio = (100 - reductionPercentage) / 100; // e.g., 20% reduction -> 0.8 speed ratio
+            const powerRatio = Math.pow(speedRatio, 3);
+            const savingPercentage = (1 - powerRatio) * 100;
+
+            energySavingResult.textContent = `Ahorro Teórico: ${savingPercentage.toFixed(1)}%`;
+            energySavingResult.style.color = 'var(--color-primary-dark)';
+        });
+
+
+        // Initial state: motor stopped, frequency buttons disabled, info cards collapsed
+        motorRunning = false;
+        freqButtons.forEach(btn => btn.classList.add('disabled'));
+        updateMetricValue(freqReadout, `0 Hz`);
+        updateMetricValue(voltReadout, `0 V`);
+        updateMetricValue(currReadout, `0 A`);
+        updateMetricValue(rpmReadout, `0 RPM`);
+        performanceChart.setActiveElements([]);
+        performanceChart.update();
+        updateMotorVisualization(0);
+        updateVHzVisualizer(0, 0); // Reset V/Hz bars
+        updatePowerEfficiency(0); // Reset power efficiency bar
+        showStatus('Motor Detenido', 'info');
+
+        infoCards.forEach(card => {
+            card.querySelector('.info-card-content').classList.remove('expanded');
+            card.querySelector('.info-card-header').classList.remove('expanded');
+        });
+
+        // Initialize energy saving calculator with default value
+        calculateEnergySavingBtn.click(); // Trigger calculation on load
+    </script>
+
+</body>
+</html>
